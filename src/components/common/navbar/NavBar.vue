@@ -25,7 +25,7 @@
   }
   .left,
   .right {
-    width: 60px;
+    width: 17%;
   }
   .center {
     flex: 1;

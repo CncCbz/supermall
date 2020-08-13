@@ -6,8 +6,8 @@
 
 <script>
   export default {
-    name: "TabBar"
-  }
+    name: 'TabBar'
+  };
 </script>
 
 <style scoped>
@@ -15,7 +15,7 @@
     background-color: #f6f6f6;
     height: 49px;
     border-top: 1px solid #eee;
-    box-shadow: 0 -1px 1px rgba(150,150,150,.08);
+    box-shadow: 0 -1px 1px rgba(150, 150, 150, 0.08);
 
     position: fixed;
     left: 0;

@@ -24,12 +24,15 @@
     props: {
       titles: {
         type: Array,
-        default: []
+        default() {
+          return [];
+        }
       }
     },
     methods: {
       spClick(index) {
         this.current_index = index;
+        this.$emit('tabClick', index);
       }
     }
   };
