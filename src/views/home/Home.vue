@@ -3,6 +3,13 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
+    <tab-control
+      :titles="['流行', '新款', '精选']"
+      @tabClick="tabClick"
+      ref="tabControl1"
+      v-show="isTabControlFixed"
+      class="tabControl1"
+    ></tab-control>
     <scroll
       class="content"
       ref="scroll"
@@ -11,13 +18,13 @@
       :pull-up-load="true"
       @pullingUp="loadMore"
     >
-      <home-swiper :banners="banners"></home-swiper>
+      <home-swiper :banners="banners" @swiperImgLoad="swiperImgLoad"></home-swiper>
       <recommend :recommend="recommend"></recommend>
       <feature></feature>
       <tab-control
-        class="tabControl"
         :titles="['流行', '新款', '精选']"
         @tabClick="tabClick"
+        ref="tabControl2"
       ></tab-control>
       <goods-list :list="goods[currentType].list"></goods-list>
     </scroll>
@@ -37,6 +44,7 @@
   import BackTop from 'components/content/backTop/backTop';
 
   import { getHomeMultidata, getHomeGoodsdata } from 'network/home';
+  import { debounce } from 'common/utils';
 
   export default {
     name: 'Home',
@@ -50,7 +58,10 @@
           sell: { page: 0, list: [] }
         },
         currentType: 'pop',
-        backTop_isActive: false
+        backTop_isActive: false,
+        tabControlTop: 0,
+        isTabControlFixed: false,
+        saveY: 0
       };
     },
     components: {
@@ -69,11 +80,23 @@
       this.getHomeGoodsdata('sell');
       this.getHomeGoodsdata('new');
     },
-    updated() {
-      this.$refs.scroll.scroll.refresh();
+    activated() {
+      this.$refs.scroll.refresh();
+      this.$refs.scroll.scrollTo(0, this.saveY, 0);
+    },
+    deactivated() {
+      this.saveY = this.$refs.scroll.getScrollY();
+    },
+    mounted() {
+      const refresh = debounce(this.$refs.scroll.refresh, 200);
+      this.$bus.$on('goodsItemImgLoad', () => {
+        refresh();
+      });
     },
     methods: {
-      //事件代码
+      /**
+       * 事件相关代码
+       */
       tabClick(index) {
         switch (index) {
           case 0:
@@ -85,6 +108,8 @@
           case 2:
             this.currentType = 'sell';
         }
+        this.$refs.tabControl1.current_index = index;
+        this.$refs.tabControl2.current_index = index;
       },
       topClick() {
         this.$refs.scroll.scrollTo(0, 0, 500);
@@ -95,13 +120,23 @@
         } else {
           this.backTop_isActive = false;
         }
+        if (position.y <= -this.tabControlTop) {
+          this.isTabControlFixed = true;
+        } else {
+          this.isTabControlFixed = false;
+        }
       },
       loadMore() {
         this.getHomeGoodsdata(this.currentType);
         this.$refs.scroll.finishPullup();
       },
+      swiperImgLoad() {
+        this.tabControlTop = this.$refs.tabControl2.$el.offsetTop;
+      },
 
-      // 网络请求相关代码
+      /**
+       * 网络请求相关代码
+       */
       getHomeMultidata() {
         getHomeMultidata().then(res => {
           this.banners = res.data.banner.list;
@@ -126,15 +161,8 @@
   .home-nav {
     background-color: var(--color-tint);
     color: #fff;
-    position: relative;
+    /* position: relative; */
     z-index: 3;
-  }
-  .tabControl {
-    height: 40px;
-    line-height: 40px;
-    background-color: #fff;
-    position: sticky;
-    top: 44px;
   }
   .content {
     position: absolute;
@@ -148,5 +176,9 @@
     position: fixed;
     bottom: 50px;
     right: 10px;
+  }
+  .tabControl1 {
+    position: relative;
+    z-index: 3;
   }
 </style>

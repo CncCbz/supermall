@@ -1,6 +1,6 @@
 <template>
-  <div class="goodsItem">
-    <img :src="goodsItem.show.img" alt="" />
+  <div class="goodsItem" @click="goodsItemClick">
+    <img :src="goodsItem.show.img" alt="" @load="imgLoad" />
     <div class="goodsInfos">
       <p>{{ goodsItem.title }}</p>
       <p>
@@ -22,9 +22,22 @@
           return {};
         }
       }
+      // path: {
+      //   type: String,
+      //   required: true
+      // }
     },
     data() {
       return {};
+    },
+    methods: {
+      goodsItemClick() {
+        this.$emit('goodsItemClick');
+        this.$router.push('/detail/' + this.goodsItem.iid);
+      },
+      imgLoad() {
+        this.$bus.$emit('goodsItemImgLoad');
+      }
     }
   };
 </script>

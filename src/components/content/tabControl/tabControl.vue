@@ -42,6 +42,9 @@
   .tabControl {
     display: flex;
     text-align: center;
+    height: 40px;
+    line-height: 40px;
+    background-color: #fff;
   }
   .tabControl .tabControlItem {
     flex: 1;
