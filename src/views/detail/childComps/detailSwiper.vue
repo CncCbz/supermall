@@ -1,7 +1,7 @@
 <template>
   <swiper>
-    <swiper-item v-for="banner in banners">
-      <div class="swiper">
+    <swiper-item v-for="banner in banners" :key="banner">
+      <div class="detailSwiper">
         <img :src="banner" alt="" />
       </div>
     </swiper-item>
@@ -31,7 +31,7 @@
 </script>
 
 <style scoped>
-  .swiper {
+  .detailSwiper {
     height: 250px;
     width: 100%;
     overflow-y: hidden;

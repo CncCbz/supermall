@@ -12,6 +12,9 @@
         {{ itemInfo.discountDesc }}
       </span>
     </div>
+    <div class="columns">
+      <span v-for="column in goodsDetail.columns">{{ column }}</span>
+    </div>
   </div>
 </template>
 
@@ -20,6 +23,10 @@
     name: 'itemInfo',
     props: {
       itemInfo: {
+        type: Object,
+        required: true
+      },
+      goodsDetail: {
         type: Object,
         required: true
       }
@@ -36,6 +43,7 @@
   }
   .price {
     display: flex;
+    margin: 10px 0px;
   }
   .curPrice {
     color: var(--color-high-text);
@@ -55,5 +63,22 @@
     color: #ffffff;
     padding: 2px 2px;
     margin-left: 5px;
+  }
+  .columns {
+    display: flex;
+    padding: 10px 0px;
+    border-bottom: 1px solid #f6f6f6;
+  }
+  .columns span {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    color: #aaa;
+  }
+  .columns span:first-child {
+    text-align: left;
+  }
+  .columns span:last-child {
+    text-align: right;
   }
 </style>
