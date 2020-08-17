@@ -14,7 +14,7 @@
         </div>
       </div>
     </nav-bar>
-    <scroll class="content" ref="scroll">
+    <scroll class="content" ref="scroll" @position="contentScroll">
       <detail-swiper :banners="itemInfo.topImages"></detail-swiper>
       <item-info :itemInfo="itemInfo" :goodsDetail="goodsDetail" class="itemInfo"></item-info>
       <shop-info :shopInfo="shopInfo"></shop-info>
@@ -23,7 +23,11 @@
         :detailImage="detailImage"
         @detailImgLoad="detailImgLoad"
       ></detail-info>
+      <item-params :itemParams="itemParams" ref="itemParams"></item-params>
+      <rate :rate="rate" ref="detailRate"></rate>
+      <goods-list :list="recommendList" ref="recommendList"></goods-list>
     </scroll>
+    <back-top class="backTop" @click.native="topClick" v-show="backTop_isActive"></back-top>
   </div>
 </template>
 
@@ -31,13 +35,17 @@
   import NavBar from 'components/common/navbar/NavBar';
   import Scroll from 'components/common/scroll/scroll';
 
+  import GoodsList from 'components/content/goodsList/goods';
+  import BackTop from 'components/content/backTop/backTop';
+
   import DetailSwiper from './childComps/detailSwiper';
   import ItemInfo from './childComps/detailItemInfo';
   import ShopInfo from './childComps/detailShopInfo';
   import DetailInfo from './childComps/detailDetailInfo';
+  import ItemParams from './childComps/detailItemParams';
+  import Rate from './childComps/detailRate';
 
-  import { getDetailGoodsdata } from 'network/detail';
-  import { debounce } from 'common/utils';
+  import { getDetailGoodsdata, getDetailRecommend } from 'network/detail';
 
   export default {
     name: 'Detail',
@@ -48,18 +56,27 @@
         shopInfo: {},
         goodsDetail: {},
         detailImage: {},
+        itemParams: {},
+        rate: {},
+        recommendList: [],
         titles: ['商品', '参数', '评论', '推荐'],
-        currentIndex: 0
+        currentIndex: 0,
+        backTop_isActive: false,
+        themeTopYs: []
       };
     },
     created() {
       this.iid = this.$route.params.iid;
       getDetailGoodsdata(this.iid).then(res => {
         this.goodsDetail = res.result;
-        // this.banners = res.result.itemInfo.topImages;
         this.itemInfo = res.result.itemInfo;
         this.shopInfo = res.result.shopInfo;
         this.detailImage = res.result.detailInfo.detailImage[0];
+        this.itemParams = res.result.itemParams;
+        this.rate = res.result.rate;
+      });
+      getDetailRecommend().then(res => {
+        this.recommendList = res.data.list;
       });
     },
     mounted() {},
@@ -69,12 +86,57 @@
        */
       navClick(index) {
         this.currentIndex = index;
+        switch (index) {
+          case 0:
+            this.$refs.scroll.scrollTo(0, 0, 500);
+            break;
+          case 1: {
+            // let el = document.querySelector('.itemParams');
+            // this.$refs.scroll.scrollToElement(el, 500);
+            this.$refs.scroll.scrollTo(0, this.themeTopYs[index], 500);
+            break;
+          }
+          case 2: {
+            // let el = document.querySelector('.detailRate');
+            // this.$refs.scroll.scrollToElement(el, 500);
+            this.$refs.scroll.scrollTo(0, this.themeTopYs[index], 500);
+            break;
+          }
+          case 3: {
+            // let el = document.querySelector('.goods');
+            // this.$refs.scroll.scrollToElement(el, 500);
+            this.$refs.scroll.scrollTo(0, this.themeTopYs[index], 500);
+            break;
+          }
+        }
       },
       backClick() {
         this.$router.back();
       },
       detailImgLoad() {
         this.$refs.scroll.refresh();
+
+        this.themeTopYs = [];
+        this.themeTopYs.push(0);
+        this.themeTopYs.push(-1 * this.$refs.itemParams.$el.offsetTop);
+        this.themeTopYs.push(-1 * this.$refs.detailRate.$el.offsetTop);
+        this.themeTopYs.push(-1 * this.$refs.recommendList.$el.offsetTop);
+        this.themeTopYs.push(-Infinity);
+      },
+      topClick() {
+        this.$refs.scroll.scrollTo(0, 0, 500);
+      },
+      contentScroll(position) {
+        if (position.y <= -700) {
+          this.backTop_isActive = true;
+        } else {
+          this.backTop_isActive = false;
+        }
+        for (let i = 0; i < this.themeTopYs.length; i++) {
+          if (position.y <= this.themeTopYs[i] && position.y > this.themeTopYs[i + 1]) {
+            this.currentIndex = i;
+          }
+        }
       }
       /**
        * 网络请求相关
@@ -86,7 +148,11 @@
       DetailSwiper,
       ItemInfo,
       ShopInfo,
-      DetailInfo
+      DetailInfo,
+      ItemParams,
+      Rate,
+      GoodsList,
+      BackTop
     }
   };
 </script>
@@ -125,5 +191,10 @@
   }
   .itemInfo {
     margin: 0px 5px;
+  }
+  .backTop {
+    position: fixed;
+    bottom: 50px;
+    right: 10px;
   }
 </style>

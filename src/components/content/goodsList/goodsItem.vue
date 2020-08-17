@@ -1,6 +1,6 @@
 <template>
   <div class="goodsItem" @click="goodsItemClick">
-    <img :src="goodsItem.show.img" alt="" @load="imgLoad" />
+    <img :src="showImg" alt="" @load="imgLoad" />
     <div class="goodsInfos">
       <p>{{ goodsItem.title }}</p>
       <p>
@@ -32,11 +32,25 @@
     },
     methods: {
       goodsItemClick() {
-        this.$emit('goodsItemClick');
-        this.$router.push('/detail/' + this.goodsItem.iid);
+        let iid = this.goodsItem.item_id;
+        if (iid == undefined) {
+          iid = this.goodsItem.iid;
+          this.$emit('goodsItemClick');
+          this.$router.push('/detail/' + iid);
+        } else {
+          alert('没有数据，别点啦！！！');
+        }
+        // let iid = this.goodsItem.iid;
+        // this.$emit('goodsItemClick');
+        // this.$router.push('/detail/' + iid);
       },
       imgLoad() {
         this.$bus.$emit('goodsItemImgLoad');
+      }
+    },
+    computed: {
+      showImg() {
+        return this.goodsItem.image || this.goodsItem.show.img;
       }
     }
   };

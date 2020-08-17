@@ -49,7 +49,7 @@
 
 <style scoped>
   .detailInfo {
-    margin-top: 20px;
+    padding-top: 20px;
     border-top: 2px solid #f6f6f6;
   }
   .lineBar {

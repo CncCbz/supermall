@@ -61,7 +61,8 @@
         backTop_isActive: false,
         tabControlTop: 0,
         isTabControlFixed: false,
-        saveY: 0
+        saveY: 0,
+        itemImgListener: null
       };
     },
     components: {
@@ -86,12 +87,15 @@
     },
     deactivated() {
       this.saveY = this.$refs.scroll.getScrollY();
+      this.$bus.$off('goodsItemImgLoad', this.itemImgListener);
     },
     mounted() {
       const refresh = debounce(this.$refs.scroll.refresh, 200);
-      this.$bus.$on('goodsItemImgLoad', () => {
+      //对监听事件进行保存
+      this.itemImgListener = () => {
         refresh();
-      });
+      };
+      this.$bus.$on('goodsItemImgLoad', this.itemImgListener);
     },
     methods: {
       /**
@@ -133,7 +137,6 @@
       swiperImgLoad() {
         this.tabControlTop = this.$refs.tabControl2.$el.offsetTop;
       },
-
       /**
        * 网络请求相关代码
        */

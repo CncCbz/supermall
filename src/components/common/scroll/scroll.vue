@@ -51,6 +51,9 @@
       },
       getScrollY() {
         return this.scroll ? this.scroll.y : 0;
+      },
+      scrollToElement(el, time = 300) {
+        this.scroll && this.scroll.scrollToElement(el, time);
       }
     }
   };
