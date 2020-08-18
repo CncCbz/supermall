@@ -28,6 +28,8 @@
       <goods-list :list="recommendList" ref="recommendList"></goods-list>
     </scroll>
     <back-top class="backTop" @click.native="topClick" v-show="backTop_isActive"></back-top>
+    <bottom-bar @showSku="showSku"></bottom-bar>
+    <sku class="sku" :skuInfo="skuInfo" v-show="isSku" @showInfoClose="showInfoClose"></sku>
   </div>
 </template>
 
@@ -44,6 +46,8 @@
   import DetailInfo from './childComps/detailDetailInfo';
   import ItemParams from './childComps/detailItemParams';
   import Rate from './childComps/detailRate';
+  import BottomBar from './childComps/detailBottomBar';
+  import Sku from './childComps/detailSku';
 
   import { getDetailGoodsdata, getDetailRecommend } from 'network/detail';
 
@@ -62,7 +66,9 @@
         titles: ['商品', '参数', '评论', '推荐'],
         currentIndex: 0,
         backTop_isActive: false,
-        themeTopYs: []
+        themeTopYs: [],
+        skuInfo: {},
+        isSku: false
       };
     },
     created() {
@@ -74,6 +80,7 @@
         this.detailImage = res.result.detailInfo.detailImage[0];
         this.itemParams = res.result.itemParams;
         this.rate = res.result.rate;
+        this.skuInfo = res.result.skuInfo;
       });
       getDetailRecommend().then(res => {
         this.recommendList = res.data.list;
@@ -137,6 +144,12 @@
             this.currentIndex = i;
           }
         }
+      },
+      showSku() {
+        this.isSku = !this.isSku;
+      },
+      showInfoClose() {
+        this.isSku = false;
       }
       /**
        * 网络请求相关
@@ -152,7 +165,9 @@
       ItemParams,
       Rate,
       GoodsList,
-      BackTop
+      BackTop,
+      BottomBar,
+      Sku
     }
   };
 </script>
@@ -167,7 +182,7 @@
   .content {
     position: absolute;
     top: 44px;
-    bottom: 0px;
+    bottom: 49px;
     left: 0px;
     right: 0px;
     overflow: hidden;
