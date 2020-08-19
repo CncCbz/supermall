@@ -29,7 +29,15 @@
     </scroll>
     <back-top class="backTop" @click.native="topClick" v-show="backTop_isActive"></back-top>
     <bottom-bar @showSku="showSku"></bottom-bar>
-    <sku class="sku" :skuInfo="skuInfo" v-show="isSku" @showInfoClose="showInfoClose"></sku>
+    <sku
+      class="sku"
+      :iid="iid"
+      :skuInfo="skuInfo"
+      v-show="isSku"
+      @showInfoClose="showInfoClose"
+      @addCartSuccess="addCartSuccess"
+    ></sku>
+    <div class="addCartSuccess" v-show="isSuccess">已加入购物车!</div>
   </div>
 </template>
 
@@ -68,7 +76,8 @@
         backTop_isActive: false,
         themeTopYs: [],
         skuInfo: {},
-        isSku: false
+        isSku: false,
+        isSuccess: false
       };
     },
     created() {
@@ -150,6 +159,13 @@
       },
       showInfoClose() {
         this.isSku = false;
+      },
+      addCartSuccess() {
+        this.isSuccess = true;
+        this.isSku = false;
+        setTimeout(() => {
+          this.isSuccess = false;
+        }, 1000);
       }
       /**
        * 网络请求相关
@@ -211,5 +227,19 @@
     position: fixed;
     bottom: 50px;
     right: 10px;
+  }
+  .addCartSuccess {
+    background-color: rgb(43, 43, 43);
+    color: #fff;
+    position: fixed;
+    bottom: 50%;
+    left: 50%;
+    width: 150px;
+    height: 30px;
+    margin-left: -75px;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 5px;
+    opacity: 0.5;
   }
 </style>

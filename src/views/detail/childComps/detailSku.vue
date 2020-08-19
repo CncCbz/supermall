@@ -36,8 +36,8 @@
       </div>
     </div>
     <div class="buttom">
-      <div class="addCart">加入购物车</div>
-      <div class="buy">购买</div>
+      <div class="addCart" @click="addCart">加入购物车</div>
+      <div class="buy" @click="buy">购买</div>
     </div>
     <div class="close" @click="close"></div>
   </div>
@@ -49,6 +49,9 @@
     props: {
       skuInfo: {
         type: Object
+      },
+      iid: {
+        type: String
       }
     },
     data() {
@@ -71,7 +74,6 @@
       },
       'current.styleId': {
         handler(newId, oldId) {
-          console.log('style监听成功');
           if (this.current.sizeId != undefined) {
             for (let item in this.skus) {
               if ((item.styleId == this.current.styleId) & (item.sizeId == this.current.sizeId)) {
@@ -87,7 +89,6 @@
       },
       'current.sizeId': {
         handler(newId, oldId) {
-          console.log('size监听成功');
           if (this.current.styleId != undefined) {
             for (let item of this.skus) {
               if ((item.styleId == this.current.styleId) & (item.sizeId == this.current.sizeId)) {
@@ -138,6 +139,35 @@
       },
       close() {
         this.$emit('showInfoClose');
+      },
+      addCart() {
+        if (
+          (this.current.sizeId != undefined) &
+          (this.current.styleId != undefined) &
+          (this.counter != 0)
+        ) {
+          let iid = this.iid;
+          let title = this.skuInfo.title;
+          let img = this.preImg;
+          let style = this.preStyle;
+          let counter = this.counter;
+          let price = this.prePrice;
+          let cartInfo = {
+            iid,
+            title,
+            img,
+            style,
+            counter,
+            price
+          };
+          this.$store.commit('addCart', cartInfo);
+          this.$emit('addCartSuccess');
+        } else {
+          alert('请正确选择款式!');
+        }
+      },
+      buy() {
+        alert('购买成功！');
       }
     },
     computed: {
