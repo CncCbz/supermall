@@ -38,13 +38,17 @@
         type: ['pop', 'new', 'sell']
       };
     },
+    created() {
+      this.$bus.$on('goodsItemImgLoad', () => {
+        this.$refs.scroll.refresh();
+      });
+    },
     methods: {
       imgLoad() {
         this.$refs.scroll.refresh;
       },
       curConBarIndex(index) {
         let type = this.type[index];
-        console.log(type);
         this.$emit('curConBarIndex', type);
       }
     },

@@ -197,7 +197,7 @@
     height: auto;
   }
   .content .itemInfos {
-    width: calc((100%-20px -70px) * 0.6);
+    width: calc((100%-90px) * 0.7);
     margin-left: 15px;
   }
   .content .itemInfos .title {

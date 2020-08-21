@@ -167,7 +167,15 @@
         }
       },
       buy() {
-        alert('购买成功！');
+        if (
+          (this.current.sizeId != undefined) &
+          (this.current.styleId != undefined) &
+          (this.counter != 0)
+        ) {
+          alert('购买成功！');
+        } else {
+          alert('请正确选择款式!');
+        }
       }
     },
     computed: {
